@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Advance Birthday — Kanishka 🎂❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#1a0b1b;
+    --bg2:#2b0f2a;
+    --accent:#ff4d79;
+    --accent-soft:#ffd1dc;
+    --card: rgba(255,255,255,0.03);
+    --glass: rgba(255,255,255,0.04);
+    --gold: #ffd166;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+    background: radial-gradient(1200px 800px at 15% 20%, #2a0922 0%, #140416 45%, #07020a 100%), linear-gradient(180deg,#120216, #2b0f2a 140%);
+    color:#fff;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* floating hearts/back */
+  .hearts{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden}
+  .heart{position:absolute; font-size:14px; color:var(--accent-soft); opacity:.9; filter: drop-shadow(0 0 6px rgba(255,77,121,.45)); animation:floatUp linear forwards}
+  @keyframes floatUp{ from{transform:translateY(110vh) scale(.7)} to{transform:translateY(-20vh) scale(1.2) rotate(360deg)}}
+
+  /* container pages */
+  .page{display:none; min-height:100vh; padding:36px; position:relative; z-index:1; display:flex; align-items:center; justify-content:center}
+  .page.active{display:flex}
+
+  /* card */
+  .card{
+    width:min(100%,1100px); border-radius:20px; padding:26px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    border:1px solid rgba(255,255,255,0.06); box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    backdrop-filter: blur(6px);
+  }
+
+  /* heading handwriting */
+  .hand{
+    font-family:'Dancing Script', cursive; font-size: clamp(34px, 8vw, 72px);
+    color:#fff; margin:0; text-align:center; letter-spacing:0.6px;
+    text-shadow: 0 4px 18px rgba(255,77,121,0.12);
+  }
+  .sub{ text-align:center; opacity:0.9; margin-top:6px; font-size:16px }
+
+  /* countdown */
+  .countdown{ display:flex; gap:12px; justify-content:center; align-items:center; margin:22px 0; flex-wrap:wrap }
+  .timeBox{ min-width:90px; border-radius:14px; padding:12px 14px; background: linear-gradient(180deg,#2a1530,#1b0f25); border:1px solid rgba(255,255,255,0.06); text-align:center }
+  .timeBox .val{ font-weight:800; font-size: clamp(20px,4.5vw,34px); color:var(--gold); text-shadow:0 0 12px rgba(255,209,102,0.18) }
+  .timeBox .lab{ font-size:11px; opacity:0.9; letter-spacing:1px; text-transform:uppercase }
+
+  /* buttons */
+  .toolbar{ display:flex; gap:12px; justify-content:center; margin-top:12px; flex-wrap:wrap }
+  .btn{ background: linear-gradient(90deg,var(--accent), #ff7aa2); padding:12px 18px; border-radius:999px; border:none; color:#fff; font-weight:700; cursor:pointer; box-shadow:0 12px 28px rgba(255,77,121,0.18); transition: transform .15s }
+  .btn:hover{ transform:translateY(-3px) scale(1.02) }
+
+  /* slideshow */
+  .slideshow{ margin:16px 0; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px; border:1px solid rgba(255,255,255,0.04) }
+  .slides-wrap{ position:relative; width:100%; min-height:420px; display:flex; align-items:center; justify-content:center; overflow:hidden }
+  .slide{ position:absolute; left:0; top:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .9s ease, transform 1s ease; transform: scale(1.02) }
+  .slide.active{ opacity:1; transform: scale(1) }
+  .frame{
+    display:flex; align-items:center; justify-content:center; border-radius:12px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    max-width:100%; max-height:80vh; overflow:auto; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+  }
+  /* IMPORTANT: keep natural size (no forced upscaling). Small images will remain small; large images scale down to fit viewport */
+  .slide img{
+    display:block; width:auto; height:auto; max-width:100%; max-height:78vh; object-fit:contain;
+    border-radius:8px; background:linear-gradient(180deg,#fff, #fff0); padding:6px;
+  }
+  .navArrows{ display:flex; justify-content:space-between; gap:8px; margin-top:12px }
+  .arrowBtn{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:#fff; padding:8px 12px; border-radius:12px; cursor:pointer }
+
+  /* calendar */
+  .calendar{ margin-top:18px; width:260px; background: linear-gradient(180deg,#240a1f,#1b0713); border-radius:12px; padding:10px; color:#fff; box-shadow: 0 10px 30px rgba(0,0,0,0.5) }
+  .calHead{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; }
+  .calTitle{ font-weight:700; letter-spacing:0.6px; font-size:16px }
+  .calGrid{ display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; }
+  .calCell{ aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(255,255,255,0.02); font-weight:700 }
+  .calCell.small{ font-size:13px; color:rgba(255,255,255,0.9) }
+  .calHeart{ background: transparent; color:var(--accent); font-size:18px; position:relative; cursor:pointer; }
+  /* heartbeat effect */
+  .calHeart .heart-icon{ display:inline-block; animation:heartbeat 1s infinite; transform-origin:center; filter: drop-shadow(0 0 8px rgba(255,77,121,0.35)); }
+  @keyframes heartbeat{
+    0%{ transform: scale(1); }
+    25%{ transform: scale(1.18); }
+    40%{ transform: scale(0.96); }
+    60%{ transform: scale(1.08); }
+    100%{ transform: scale(1); }
+  }
+  .calHeart .tooltip{ position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); background:var(--accent); padding:6px 8px; border-radius:8px; font-size:12px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .18s }
+  .calHeart:hover .tooltip{ opacity:1 }
+
+  /* letter */
+  .letterWrap{ min-height:60vh; padding:18px; border-radius:16px; border:1px solid rgba(255,255,255,0.08); background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+  .typeText{ white-space:pre-wrap; font-size:18px; line-height:1.75; color: #fff; }
+  .cursor{ display:inline-block; width:10px; background:var(--accent); margin-left:6px; animation:blink 1s step-end infinite; vertical-align:bottom; height:18px; border-radius:3px }
+  @keyframes blink{ 50%{ background:transparent } }
+
+  /* surprise page styling */
+  .surpriseWrap{ display:flex; flex-direction:column; align-items:center; gap:18px }
+  .cake{
+    width:220px; height:180px; position:relative; margin-top:8px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cake .layer{ position:absolute; left:50%; transform:translateX(-50%); border-radius:12px; }
+  .cake .bottom{ width:200px; height:70px; background: linear-gradient(180deg,#ffd9e3,#ffc0da); bottom:0; box-shadow:0 10px 20px rgba(0,0,0,0.25) }
+  .cake .middle{ width:170px; height:60px; background: linear-gradient(180deg,#fff1f6,#ffdbe6); bottom:36px }
+  .cake .top{ width:130px; height:48px; background: linear-gradient(180deg,#fff,#ffe9f2); bottom:74px }
+  .candle{ position:absolute; top:-10px; width:6px; height:28px; background:#ff8aa0; border-radius:3px }
+  .flame{ position:absolute; top:-18px; left:50%; transform:translateX(-50%); width:14px; height:18px; background: radial-gradient(circle at 30% 30%, #fff7b1, #ffce5f 40%, #ff6b6b 70%); border-radius:50% / 60% }
+  .balloons{ position:relative; width:100%; height:140px; overflow:visible; display:flex; gap:18px; align-items:flex-end; justify-content:center }
+  .balloon{ width:36px; height:48px; border-radius:50% 50% 50% 50%; background:var(--accent); position:relative; animation:floatBalloon 4s ease-in-out infinite; }
+  .balloon::after{ content:''; position:absolute; left:50%; bottom:-12px; width:2px; height:12px; background:#fff1; transform:translateX(-50%) }
+  @keyframes floatBalloon{ 0%{ transform: translateY(6px) } 50%{ transform: translateY(-8px) } 100%{ transform: translateY(6px) } }
+
+  /* confetti hearts for magic */
+  .burst { position:relative; width:260px; height:180px; }
+  .particle { position:absolute; font-size:18px; opacity:0; transform:translate(-50%,-50%) scale(.8); }
+  .hidden { display:none }
+
+  /* responsive */
+  @media (max-width:920px){
+    .card{ padding:18px; width:95% }
+    .slides-wrap{ min-height:320px }
+    .calendar{ width:220px }
+  }
+  @media (max-width:520px){
+    .slides-wrap{ min-height:240px }
+    .calendar{ width:180px }
+    .timeBox .val{ font-size:20px }
+  }
+</style>
+</head>
+<body>
+
+  <!-- floating hearts -->
+  <div class="hearts" id="hearts"></div>
+
+  <!-- Page: Home -->
+  <section class="page active" id="page-home">
+    <div class="card">
+      <h1 class="hand">Wishing You Advance Happy Birthday, <span style="color:var(--accent); text-decoration:underline wavy var(--accent)">Kanishka jii</span></h1>
+      <p class="sub">Yeh ek chhota sa surprise hai — sirf aur sirf aapke liye aapse jyada excitement mujhe hai aapke birthday ki. 💖</p>
+
+      <div class="countdown" id="countdown">
+        <div class="timeBox"><div class="val" id="days">00</div><div class="lab">Days</div></div>
+        <div class="dotHeart">❤</div>
+        <div class="timeBox"><div class="val" id="hours">00</div><div class="lab">Hours</div></div>
+        <div class="dotHeart">❤</div>
+        <div class="timeBox"><div class="val" id="minutes">00</div><div class="lab">Minutes</div></div>
+        <div class="dotHeart">❤</div>
+        <div class="timeBox"><div class="val" id="seconds">00</div><div class="lab">Seconds</div></div>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn" id="musicBtn">♫ Play Music for better experience</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Page: Photos -->
+  <section class="page" id="page-photos">
+    <div class="card" style="padding-bottom:12px;">
+      <h2 class="hand" style="font-size: clamp(28px,6.5vw,48px)">Aaapki Kuch Tashveere 📸</h2>
+
+      <div class="slideshow">
+        <div class="slides-wrap" id="slidesWrap">
+          <!-- slides: keep image src to 1.jpg ... 10.jpg -->
+          <div class="slide active"><div class="frame"><img src="1.jpg" alt="1"></div></div>
+          <div class="slide"><div class="frame"><img src="2.jpg" alt="2"></div></div>
+          <div class="slide"><div class="frame"><img src="3.jpg" alt="3"></div></div>
+          <div class="slide"><div class="frame"><img src="4.jpg" alt="4"></div></div>
+          <div class="slide"><div class="frame"><img src="5.jpg" alt="5"></div></div>
+          <div class="slide"><div class="frame"><img src="6.jpg" alt="6"></div></div>
+          <div class="slide"><div class="frame"><img src="7.jpg" alt="7"></div></div>
+          <div class="slide"><div class="frame"><img src="8.jpg" alt="8"></div></div>
+          <div class="slide"><div class="frame"><img src="9.jpg" alt="9"></div></div>
+          <div class="slide"><div class="frame"><img src="10.jpg" alt="10"></div></div>
+        </div>
+      </div>
+
+      <div class="navArrows" style="justify-content:center; margin-top:12px;">
+        <button class="arrowBtn" onclick="prevSlide()">⟵ Prev</button>
+        <button class="arrowBtn" onclick="nextSlide()">Next ⟶</button>
+      </div>
+
+      <div style="display:flex; gap:20px; align-items:flex-start; justify-content:center; margin-top:20px; flex-wrap:wrap">
+        <div class="calendar" aria-hidden="false">
+          <div class="calHead"><div class="calTitle">September</div><div style="opacity:.95; font-size:18px">2025</div></div>
+          <div class="calGrid" id="calGrid"></div>
+        </div>
+
+        <div style="min-width:220px; max-width:320px; text-align:left;">
+          <p style="margin:0 0 10px; font-weight:700">Kanishka💕🤞:</p>
+          <ul style="margin:0; padding-left:18px; line-height:1.4; color:#ffdfe9">
+            <li>Jab bhi main aapke baare me sochta hoon to dil me sirf ek hi khayal aata hai – 
+      duniya ki sabse khoobsurat cheez ek muskaan hai jo aapke chehre par hai. Yeh chhoti si website meri taraf se ek naya tareeka hai aapko dikhane ka 
+      ki aap kitni khaas ho. 🌸 Har pal aap meri duaon me ho aur har din main bas yehi chahta hoon 
+      ki aap hamesha khush raho.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="toolbar" style="margin-top:14px">
+        <button class="btn" onclick="show('page-letter')">💌 ek khaash message padhne ke liye yaha click kare 💌</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Page: Letter -->
+  <section class="page" id="page-letter">
+    <div class="card">
+      <h2 class="hand" style="font-size: clamp(28px,6.5vw,48px)">Aapke Liye Kuch Khaash Message 💖</h2>
+      <div class="letterWrap">
+        <div class="typeText" id="typeText"></div><span class="cursor" id="cursor"></span>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Page: Surprise -->
+  <section class="page" id="page-surprise">
+    <div class="card">
+      <h2 class="hand" style="font-size: clamp(28px,6.5vw,48px)">Surprise For You ✨</h2>
+      <div class="surpriseWrap" style="margin-top:8px">
+        <!-- balloons -->
+        <div class="balloons" aria-hidden="true">
+          <div class="balloon" style="background:#ff7aa2; animation-delay:0s"></div>
+          <div class="balloon" style="background:#ffd1dc; animation-delay:.3s"></div>
+          <div class="balloon" style="background:#ff9ab8; animation-delay:.6s"></div>
+          <div class="balloon" style="background:#ff9ab8; animation-delay:.9s"></div>
+        </div>
+
+        <!-- cake -->
+        <div class="cake" aria-hidden="true">
+          <div class="layer bottom"></div>
+          <div class="layer middle"></div>
+          <div class="layer top"></div>
+          <div class="candle" style="left:50%"><div class="flame"></div></div>
+        </div>
+
+        <!-- magic button -->
+        <button class="btn" id="magicBtn">Click for Magic ✨</button>
+
+        <!-- burst area -->
+        <div class="burst" id="burstArea" aria-hidden="true"></div>
+
+        <p style="max-width:860px; line-height:1; text-align:center; color:#ffe9f1; margin-top:2px">
+          Aap meri zindagi ka sabse khubsurat inshaan thi, ho, aur hamesha rahogi . Yeh chhota sa surprise bas aapko smile dene ke liye.
+        </p>
+
+        <div class="toolbar">
+          <button class="btn" onclick="show('page-home')">💌💕Dil se Banaya hai aapke liye💕💌 </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- audio -->
+  <audio id="bgm" loop>
+    <source src="love-theme.mp3" type="audio/mpeg">
+  </audio>
+
+<script>
+/* ----------------- small helpers ----------------- */
+function $(id){ return document.getElementById(id) }
+
+/* ---------- floating hearts (background) ---------- */
+const heartsBox = $('hearts');
+function spawnHeart(){
+  const el = document.createElement('div');
+  el.className = 'heart';
+  el.textContent = Math.random()<0.7 ? '❤' : '💖';
+  el.style.left = Math.random()*100 + 'vw';
+  el.style.fontSize = (10 + Math.random()*28) + 'px';
+  el.style.animationDuration = (6 + Math.random()*6) + 's';
+  heartsBox.appendChild(el);
+  setTimeout(()=> el.remove(), 14000);
+}
+setInterval(spawnHeart, 400);
+
+/* ---------------- Navigation between pages ---------------- */
+function show(pageId){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  // if entering letter, start typing
+  if(pageId==='page-letter' && !typingStarted) restartTyping();
+}
+
+/* ---------------- Countdown to next 23 September ---------------- */
+const dEl = $('days'), hEl = $('hours'), mEl = $('minutes'), sEl = $('seconds');
+function getNextTarget(){
+  const now = new Date();
+  const curYear = now.getFullYear();
+  const tThis = new Date(curYear,8,23,0,0,0);
+  return (now <= tThis)? tThis : new Date(curYear+1,8,23,0,0,0);
+}
+let target = getNextTarget();
+function tick(){
+  const now = new Date();
+  let diff = Math.max(0, target - now);
+  const sec = Math.floor(diff/1000);
+  const days = Math.floor(sec/86400);
+  const hrs = Math.floor((sec%86400)/3600);
+  const mins = Math.floor((sec%3600)/60);
+  const secs = sec%60;
+  // display in elements (they exist on home)
+  if(dEl) dEl.textContent = String(days).padStart(2,'0');
+  if(hEl) hEl.textContent = String(hrs).padStart(2,'0');
+  if(mEl) mEl.textContent = String(mins).padStart(2,'0');
+  if(sEl) sEl.textContent = String(secs).padStart(2,'0');
+  if(diff<=0) target = getNextTarget();
+}
+tick(); setInterval(tick, 1000);
+
+/* ---------------- Slides (no crop/zoom) ---------------- */
+let cur = 0;
+const slides = Array.from(document.querySelectorAll('.slide'));
+function showSlide(i){
+  slides.forEach((s, idx) => s.classList.toggle('active', idx===i));
+  cur = i;
+}
+function nextSlide(){ showSlide((cur+1) % slides.length) }
+function prevSlide(){ showSlide((cur-1+slides.length) % slides.length) }
+let auto = setInterval(nextSlide, 4200);
+
+/* pause autoplay on hover, resume after */
+document.querySelectorAll('.slides-wrap').forEach(sw => {
+  sw.addEventListener('mouseenter', ()=> clearInterval(auto));
+  sw.addEventListener('mouseleave', ()=> { auto = setInterval(nextSlide, 4200);});
+});
+
+/* ---------------- Calendar build (Sept 2025) ---------------- */
+(function buildCal(){
+  const grid = document.getElementById('calGrid');
+  const days = 30;
+  // Sept 2025 starts Monday; we want Sun..Sat grid with empty first cell (Sunday)
+  // We'll render 1..30 placing starting at column 2 (index 1)
+  // But simpler: create blanks for sunday first column then 1..30.
+  // Sunday empty, Monday=1 -> So first row: [empty,1,2,3,4,5,6]
+  // We'll just push nodes in order matching rows
+  // row1: empty + 1..6 -> create 7 cells
+  // Then the rest rows
+  const order = [
+    '',1,2,3,4,5,6,
+    7,8,9,10,11,12,13,
+    14,15,16,17,18,19,20,
+    21,22,23,24,25,26,27,
+    28,29,30,'','','',''
+  ];
+  order.forEach(v => {
+    const cell = document.createElement('div');
+    cell.className = 'calCell';
+    if(v === '') { cell.textContent = ''; }
+    else if(v === 23) {
+      cell.innerHTML = `<div class="calHeart" aria-label="Kanishka Birthday"><span class="heart-icon">❤</span><div class="tooltip">🎂 Kanishka Birthday 🎂</div></div>`;
+    } else {
+      cell.classList.add('small');
+      cell.textContent = v;
+    }
+    grid.appendChild(cell);
+  });
+})();
+
+/* ---------------- Typewriter letter (only 'aap' used) ~200 words ---------------- */
+const letter = `My Dear Kanishka,
+
+Sabse pehle to ek chhota sa secret bata du – mujhe wait karna kabhi pasand nahi hai, aur aapke birthday ka wait to bilkul bhi nahi hota. Isiliye socha ki advance me hi apko wish kar du, kyunki mere liye 23rd September sirf ek date nahi hai, balki wo din hai jahan meri duniya me ek aisi khubsurat roshni aayi thi jiska ehsaas shayad shabdon me bayan karna mushkil hai.
+Aap meri zindagi ka sabse khoobsurat hissa ho. Har din, har pal, chahe doori ho ya nazdeek, aapke hone ka ek alag hi sukoon rehta hai. Aapki muskaan jaise meri thakan mita deti hai, aur aapki baatein jaise har din ko ek nayi umeed de jaati hai. Kayi baar sochta hoon ki agar aap meri zindagi me na hote to shayad sab kuch adhoora sa hota. Aapke saath rehkar har cheez poori lagti hai, jaise ek perfect tasveer ho jisme sab kuch balance ho.
+Birthday normally ek celebration hota hai, par aapka birthday mere liye ek blessing hai. Ye wo din hai jahan mai dil se shukriya karta ho uparwale ka ki usne meri zindagi me itna pyaara insaan bheja. Advance me wish karne ka reason sirf itna hai ki main ek bhi din miss nahi karna chahta aapko special feel karane ka. Aap deserve karte ho ki har din, har pal, aapke liye khushiyon ki baarish ho.
+Meri dua hai ki aane wala saal aapki zindagi me sirf hasi, sukoon aur success lekar aaye. Jo bhi aap chaho, jo sapne aapke dil me ho, sab poore ho. Aapke chehre par muskaan kabhi kam na ho, aur dil hamesha halka aur khush rahe. Mera yeh vaada hai ki main hamesha aapke saath rahunga, chahe waqt kaisa bhi ho, doori kitni bhi ho, par dil se kabhi bhi aapko akela feel nahi hone dunga.
+Kehte hain ki pyaar ko shabdon me likhna mushkil hota hai, aur main maanta hoon ki jitna aapke liye feel karta hoon uska aadha bhi shayad likh nahi pa raha. Par phir bhi, yeh letter ek chhoti si koshish hai aapko batane ki ki aap mere liye kitne special ho.
+Toh abhi se hi, dil ke sabse gehre kone se, Advance Happy Birthday Kanishka! 🎂✨
+Mere liye aap sirf ek naam nahi, balki ek ehsaas ho jo har waqt mere saath hai. Aapki khushi meri khushi hai, aur aapka dard mere liye sabse badi fikr.
+Khush rahiye, hamesha muskurate rahiye, aur apna birthday isi pyaar aur positivity ke saath celebrate kariye. Main bas yahi chahunga ki aap hamesha apni zindagi me shine karte rahein aur main hamesha aapke saath rahu.
+
+With all my love,
+your most hatest person.`;
+const out = $('typeText');
+const cursor = $('cursor');
+let idx = 0, typingStarted = false, typer;
+function typeChar(){
+  if(idx <= letter.length){
+    out.textContent = letter.slice(0, idx++);
+    typer = setTimeout(typeChar, 48); // slow typing
+  } else {
+    cursor.style.display = 'none';
+  }
+}
+function restartTyping(){
+  clearTimeout(typer);
+  idx = 0; out.textContent = ''; cursor.style.display = 'inline-block'; typingStarted = true;
+  typeChar();
+}
+// start when user opens letter page (handled in show()), but if already open (rare), ensure start
+// (we call restartTyping when navigating to letter in show())
+
+/* ---------------- Music control (user gesture required) ---------------- */
+const bgm = $('bgm'), musicBtn = $('musicBtn');
+let playing = false;
+musicBtn.addEventListener('click', async () => {
+  try{
+    if(!playing){ await bgm.play(); playing=true; musicBtn.textContent='⏸ Pause music'; }
+    else { bgm.pause(); playing=false; musicBtn.textContent='♫ for better expirence click here'; }
+  }catch(e){ alert('Please click again to allow audio (browser restriction).') }
+});
+// try silent play on first user click anywhere (best-effort)
+document.body.addEventListener('click', function once(){
+  document.body.removeEventListener('click', once, true);
+  bgm.play().then(()=>{ playing=true; musicBtn.textContent='⏸ Pause Love Theme'; }).catch(()=>{});
+}, true);
+
+/* ---------------- Surprise magic burst ---------------- */
+const magicBtn = $('magicBtn'), burstArea = $('burstArea');
+function createParticle(x,y,delay,color){
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = (x*100) + '%';
+  p.style.top = (y*100) + '%';
+  p.style.color = color || '#fff';
+  p.textContent = Math.random() < 0.6 ? '❤' : '✨';
+  burstArea.appendChild(p);
+  // animate
+  const dx = (Math.random()*2-1)*180;
+  const dy = (Math.random()*-1.5 - 0.5)*200;
+  p.animate([
+    { transform: 'translate(-50%,-50%) scale(.8)', opacity:0 },
+    { transform: `translate(${dx}px, ${dy}px) scale(1.1)`, opacity:1 },
+    { transform: `translate(${dx*1.6}px, ${dy*1.9}px) scale(.6)`, opacity:0 }
+  ], { duration: 1200 + Math.random()*800, easing: 'cubic-bezier(.2,.8,.2,1)', delay: delay });
+  setTimeout(()=> p.remove(), 2200 + Math.random()*1000);
+}
+magicBtn.addEventListener('click', ()=>{
+  // create many particles in bursts
+  for(let i=0;i<18;i++){
+    createParticle(0.5,0.45, i*30, (i%3===0)?'#ff6b9a':'#ffd1dc');
+  }
+  // small message popup
+  const m = document.createElement('div');
+  m.style.position='absolute'; m.style.top='12%'; m.style.left='50%'; m.style.transform='translateX(-50%)';
+  m.style.padding='10px 16px'; m.style.background='linear-gradient(90deg,#ff7aa2,#ffd1dc)'; m.style.color='#fff';
+  m.style.borderRadius='12px'; m.style.fontWeight=700; m.style.boxShadow='0 10px 30px rgba(0,0,0,0.3)';
+  m.textContent = 'Aap ke liye ❤ — Happy Birthday in Advance!';
+  document.querySelector('#page-surprise .card').appendChild(m);
+  setTimeout(()=> m.remove(), 3500);
+});
+
+/* ---------------- start auto slide from beginning ---------------- */
+showSlide(0);
+
+/* ---------------- ensure typing starts if user navigated directly ---------------- */
+let initialHash = location.hash.replace('#','');
+if(initialHash==='page-letter'){ show('page-letter') } // this will trigger typing
+</script>
+</body>
+</html>
